@@ -12,8 +12,17 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
             <div class="px-6 py-4 flex items-center">
-                {{-- <input type="text" wire:model="search"> --}}
-                <x-jet-input wire:model="search" type="text" class="flex-1 mr-4" placeholder="Filtre su búsqueda aquí..."></x-jet-input>
+                <div class="flex items-center">
+                    <span>Mostrar</span>
+                    <select wire:model="cantidad" class="mx-2 form-control" id="">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>entradas</span>
+                </div>
+                <x-jet-input wire:model="search" type="text" class="flex-1 mx-2" placeholder="Filtre su búsqueda aquí..."></x-jet-input>
                 @livewire('create-post')
             </div>
 
@@ -87,12 +96,20 @@
                     Ningún registro coincide con su búsqueda
                 </div>
             @endif
+
+            @if ($posts->hasPages())
+                <div class="px-6 py-3">
+                    {{ $posts->links() }}
+                </div>
+            @else
+                
+            @endif
+
         </div>
 
     </div>
 
     {{-- MODAL PARA EDITAR UN POST --}}
-
     <x-jet-dialog-modal wire:model="open_edit">
 
         <x-slot name="title">

@@ -5,24 +5,39 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\Post;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class ShowPosts extends Component
 {
     use WithFileUploads;
-    
+    use WithPagination;
+
     public $search;
     public $post;
     public $image;
     public $identificador;
     public $sort = 'id';
     public $direction = 'desc';
+    public $cantidad = '10';
 
     public $open_edit = false;
+
+    protected $queryString = [
+        'cantidad' => ['except' => '10'], 
+        'sort' => ['except' => 'id'], 
+        'direction' => ['except' => 'desc'], 
+        'search' => ['except' => '']
+    ];
 
     public function mount()
     {
         $this->identificador = rand();
         $this->post = new Post();
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 
     protected $rules = [
@@ -39,7 +54,7 @@ class ShowPosts extends Component
     {
         $posts =    Post::where('title', 'like', '%' . $this->search . '%')->
                     orWhere('content', 'like', '%' . $this->search . '%')->
-                    orderBy($this->sort, $this->direction)->get();
+                    orderBy($this->sort, $this->direction)->paginate($this->cantidad);
  
         return view('livewire.show-posts', compact('posts')); 
     }
