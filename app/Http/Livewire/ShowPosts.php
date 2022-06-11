@@ -47,7 +47,8 @@ class ShowPosts extends Component
 
     // Oyente
     protected $listeners = [ 
-        'render' => 'render'
+        'render' => 'render',
+        'delete' => 'delete'
     ];
 
     public function render()
@@ -93,5 +94,10 @@ class ShowPosts extends Component
         $this->identificador = rand();
         // $this->emitTo('show-posts', 'render');
         $this->emit('alert', '¡El post se actualizó correctamente!');
+    }
+
+    public function delete(Post $post)
+    {
+        $post->delete();
     }
 }

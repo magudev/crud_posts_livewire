@@ -80,10 +80,13 @@
                                 <td class="px-6 py-4">
                                     {{ $item->content }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 flex gap-1">
                                     {{-- @livewire('edit-post', ['post' => $post], key($post->id)) --}}
                                     <a class="btn btn-green" wire:click="edit({{$item}})">
                                         <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-red" wire:click="$emit('deletePost', {{$item->id}})">
+                                        <i class="fas fa-trash"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -158,5 +161,42 @@
         </x-slot>
 
     </x-jet-dialog-modal>
+
+    @push('js')
+        <script src="sweetalert2.all.min.js"></script>
+
+        <script>
+
+            Livewire.on('deletePost', postId => {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esta acción!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        Livewire.emitTo('show-posts', 'delete', postId);
+
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Post eliminado correctamente'
+                        })
+                    }
+                });
+            });
+
+        </script>
+    @endpush
 
 </div>
