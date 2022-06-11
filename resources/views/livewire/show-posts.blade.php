@@ -41,7 +41,7 @@
                                     <i class="fas fa-sort float-right mt-1"></i>
                                 @endif
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('content')">
+                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('content')"> 
                                 Content
                                 {{-- SORT --}}
                                 @if ($sort == 'content')
@@ -60,19 +60,22 @@
 
                     {{-- TABLE BODY --}}
                     <tbody>
-                        @foreach ($posts as $post)
+                        @foreach ($posts as $item)
                             <tr class="bg-white border-b">
                                 <td class="px-6 py-4 font-medium text-gray-900">
-                                    {{ $post->id }}
+                                    {{ $item->id }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $post->title }}
+                                    {{ $item->title }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $post->content }}
+                                    {{ $item->content }}
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    <a href="#" class="font-medium text-blue-600 hover:underline">Edit</a>
+                                <td class="px-6 py-4">
+                                    {{-- @livewire('edit-post', ['post' => $post], key($post->id)) --}}
+                                    <a class="btn btn-green" wire:click="edit({{$item}})">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
@@ -87,5 +90,56 @@
         </div>
 
     </div>
+
+    {{-- MODAL PARA EDITAR UN POST --}}
+
+    <x-jet-dialog-modal wire:model="open_edit">
+
+        <x-slot name="title">
+            <span class="font-bold">Editar: </span>{{ $post->title }}
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="mb-4">
+                <x-jet-label value="Título del post"/>
+                <x-jet-input wire:model.defer="post.title" type="text" class="w-full"/>
+                <x-jet-input-error for="post.title"/>
+            </div>
+
+            <div class="mb-4">
+                <x-jet-label value="Contenido del post"/>
+                <textarea wire:model="post.content" class="form-control w-full" rows="6" style="resize: none"></textarea>
+                <x-jet-input-error for="post.content"/>
+            </div>
+
+            <div class="mb-4">
+                <input type="file" wire:model="image" id="{{ $identificador }}">
+                <x-jet-input-error for="image"/>
+
+                <div wire:loading wire:target="image" class="my-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative w-full" role="alert">
+                    <strong class="font-bold">¡Su imagen está cargando!</strong>
+                    <span class="block sm:inline">Aguarde un momento...</span>
+                </div>
+    
+                @if ($image)
+                    <img class="mt-4 object-contain h-20 w-20" src="{{ $image->temporaryUrl() }}" alt="Imagen">
+                @else
+                    <img class="mt-4 object-contain h-20 w-20" src="{{ asset('storage/' . $post->image) }}" alt="Imagen">
+                @endif
+            </div>
+
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-jet-secondary-button class="mr-4" wire:click="$set('open_edit', false)">
+                Cancelar
+            </x-jet-secondary-button>
+
+            <x-jet-danger-button wire:click="update" wire:loading.attr="disabled">
+                Guardar cambios
+            </x-jet-danger-button>
+        </x-slot>
+
+    </x-jet-dialog-modal>
 
 </div>

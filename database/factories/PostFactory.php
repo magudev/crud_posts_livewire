@@ -26,7 +26,7 @@ class PostFactory extends Factory
             'title' => $this->faker->sentence(),
             'content' => $this->faker->text(),
             // 'image' => $filename
-            'image' => 'public/storage/prueba.png'
+            'image' => 'posts/prueba.png'
         ];
     }
 }
